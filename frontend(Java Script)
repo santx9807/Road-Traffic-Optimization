@@ -1,0 +1,52 @@
+import React, {useState} from "react";
+
+export default function Dashboard(){
+
+const [image,setImage] = useState(null);
+const [vehicles,setVehicles] = useState(0);
+const [signal,setSignal] = useState("");
+const [time,setTime] = useState(0);
+
+function uploadImage(e){
+
+const file = e.target.files[0];
+
+setImage(URL.createObjectURL(file));
+
+const formData = new FormData();
+formData.append("image",file);
+
+fetch("http://localhost:5000/detect",{
+method:"POST",
+body:formData
+})
+.then(res=>res.json())
+.then(data=>{
+setVehicles(data.vehicles);
+setSignal(data.signal);
+setTime(data.time);
+});
+
+}
+
+return(
+
+<div>
+
+<h1>Smart Traffic Signal Optimization</h1>
+
+<input type="file" onChange={uploadImage}/>
+
+{image && <img src={image} width="400"/>}
+
+<h2>Vehicle Count: {vehicles}</h2>
+
+<h2>Signal: {signal}</h2>
+
+<h2>Green Time: {time} sec</h2>
+
+</div>
+
+)
+
+}
